@@ -12,6 +12,33 @@ function App() {
   const [password, setPassword] = useState("")
 
 
+  const passwordGenerator = useCallback(() => {
+    let pass = ''
+    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+
+    if (numbers) { str += "0123456789" }
+    if (characters) { str += "!@#$%^&*-_+=[]`" }
+    
+    for (let i = 1; i < length; i++) {
+      let char = Math.floor(Math.random() * str.length + 1)
+      console.log(char);
+      pass += str.charAt(char)
+    }
+
+    setPassword(pass)
+  },[length,numbers,characters,setPassword])// to optimise the repeating dependency
+  
+  let passRef = useRef(null)// use to pass the reference of the current input or used to give user selection effect in this case
+
+  const copyPassword = useCallback(() => {
+    passRef.current?.select()// used to select the input value //optional
+    //  passRef.current?.setSelectionRange(0, 5);// used to slect a range of characters
+    window.navigator.clipboard.writeText(password)
+  },[password])
+
+  useEffect(() => {
+    passwordGenerator()
+   },[length,numbers,characters,passwordGenerator]) // here dependies are on which changes the metjod should be run
 
   return (
     <>
